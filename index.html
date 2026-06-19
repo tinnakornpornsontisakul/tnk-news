@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TokenX News</title>
+<link rel="icon" type="image/svg+xml" href="assets/tokenx-icon.svg">
+<link rel="apple-touch-icon" href="assets/tokenx-icon.svg">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="news-data.js"></script>
+<style>
+:root{
+  --canvas:#F7F5FB;
+  --ink:#1A1230; --muted:#5C5572; --faint:#938BA8; --line:#E9E0F7;
+  --accent:#6D28D9; --accent-2:#C026D3; --hl:#9333EA; --soft:#F2EAFE;
+  --paper:#ffffff; --chip-bg:#ffffff; --chip-ink:#3a3145; --chip-line:#E6DAF6;
+  --card-shadow:0 18px 44px -22px rgba(95,40,180,.34);
+}
+[data-theme="dark"]{
+  --canvas:#0B0A1F;
+  --ink:#F1EFFB; --muted:#ADA6CF; --faint:#736C9B; --line:rgba(255,255,255,.11);
+  --accent:#B79BFF; --accent-2:#F0ABFC; --hl:#C9B0FF; --soft:rgba(255,255,255,.055);
+  --paper:rgba(255,255,255,.035); --chip-bg:rgba(255,255,255,.045); --chip-ink:#D6CEF2; --chip-line:rgba(255,255,255,.12);
+  --card-shadow:0 26px 60px -26px rgba(0,0,0,.7);
+}
+*{ box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+body{ margin:0; color:var(--ink); background:var(--canvas); }
+.aurora{ position:fixed; inset:-12%; z-index:0; pointer-events:none; will-change:transform;
+  background:
+    radial-gradient(1200px 720px at 12% -16%, rgba(157,108,242,.24) 0%, transparent 58%),
+    radial-gradient(1000px 700px at 100% 4%, rgba(217,70,239,.16) 0%, transparent 54%),
+    radial-gradient(1100px 900px at 78% 118%, rgba(124,58,237,.14) 0%, transparent 56%);
+  animation:auroraDrift 24s ease-in-out infinite alternate; }
+[data-theme="dark"] .aurora{
+  background:
+    radial-gradient(820px 520px at 52% -8%, rgba(168,120,255,.20) 0%, transparent 62%),
+    radial-gradient(1300px 760px at 14% -18%, rgba(124,58,237,.40) 0%, transparent 56%),
+    radial-gradient(1000px 720px at 102% -4%, rgba(192,38,211,.26) 0%, transparent 52%),
+    radial-gradient(1200px 980px at 82% 122%, rgba(67,56,202,.30) 0%, transparent 56%); }
+#bg-artwork{ position:fixed !important; inset:0 !important; width:100vw !important; height:100vh !important; z-index:0; object-fit:cover; filter:blur(1.5px) saturate(1.08); opacity:.78; pointer-events:none; }
+.veil{ position:fixed; inset:0; z-index:0; pointer-events:none; opacity:1;
+  background:radial-gradient(125% 120% at 32% 24%, rgba(247,245,251,.9) 0%, rgba(247,245,251,.7) 46%, rgba(247,245,251,.46) 100%); }
+[data-theme="dark"] .veil{
+  background:radial-gradient(125% 120% at 32% 24%, rgba(11,10,31,.88) 0%, rgba(11,10,31,.64) 46%, rgba(11,10,31,.38) 100%); }
+[data-theme="dark"] .hero-t{ text-shadow:0 1px 24px rgba(8,6,24,.6), 0 1px 3px rgba(8,6,24,.4); }
+.grain{ position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.04; mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+[data-theme="dark"] .grain{ opacity:.06; mix-blend-mode:soft-light; }
+@keyframes auroraDrift{
+  0%{ transform:translate3d(0,0,0) scale(1); }
+  50%{ transform:translate3d(2.5%,-2%,0) scale(1.07); }
+  100%{ transform:translate3d(-2%,1.5%,0) scale(1.05); }
+}
+@keyframes gradFlow{ 0%,100%{ background-position:0% 50% } 50%{ background-position:100% 50% } }
+.gradFlow{ background-size:220% 100% !important; animation:gradFlow 6.5s ease-in-out infinite; }
+.watermark{ position:fixed; bottom:-90px; right:-90px; top:auto; transform:none; width:440px; max-width:52vw; opacity:.03; pointer-events:none; z-index:0; user-select:none; }
+[data-theme="dark"] .watermark{ opacity:.05; }
+.doc{ box-sizing:border-box; position:relative; z-index:1; max-width:1200px; margin:0 auto;
+  padding:46px clamp(20px,4vw,60px) 110px;
+  font-family:'Sukhumvit Set','Sukhumvit','Helvetica Neue','Avenir Next',Arial,sans-serif;
+  -webkit-font-smoothing:antialiased; }
+.doc-frame{ width:100%; table-layout:fixed; border-collapse:collapse; }
+.doc-frame td{ padding:0; }
+.running-hdr,.running-ftr,.hdr-space,.ftr-space{ display:none; }
+h1,h2,h3,h4{ text-wrap:balance; margin:0; }
+p,li{ text-wrap:pretty; }
+::selection{ background:var(--accent-2); color:#fff; }
+.eyebrow{ font-family:'Space Grotesk',sans-serif; }
+.grad{ background:linear-gradient(102deg,var(--accent),var(--accent-2)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+a.ref{ text-decoration:none; }
+a.ref .reftxt{ background-image:linear-gradient(var(--accent),var(--accent)); background-size:0% 1.5px; background-repeat:no-repeat; background-position:0 100%; transition:background-size .3s ease; }
+a.ref:hover .reftxt{ background-size:100% 1.5px; }
+
+/* live pulse */
+.pulse{ position:relative; }
+.pulse::after{ content:""; position:absolute; inset:0; border-radius:50%; background:inherit; animation:ping 1.8s cubic-bezier(0,0,.2,1) infinite; }
+@keyframes ping{ 0%{ transform:scale(1); opacity:.65 } 75%,100%{ transform:scale(2.6); opacity:0 } }
+
+/* load entrance */
+@keyframes fadeUp{ from{ opacity:0; transform:translateY(20px) } to{ opacity:1; transform:none } }
+@keyframes swapIn{ from{ opacity:0; transform:translateY(18px) } to{ opacity:1; transform:none } }
+.swap > *{ animation:swapIn .6s cubic-bezier(.16,.7,.2,1) both; }
+.swap > *:nth-child(2){ animation-delay:.07s }
+.swap > *:nth-child(3){ animation-delay:.14s }
+.swap > *:nth-child(4){ animation-delay:.21s }
+.swap > *:nth-child(5){ animation-delay:.28s }
+.swap > *:nth-child(6){ animation-delay:.35s }
+.swap > *:nth-child(7){ animation-delay:.42s }
+.fade{ animation:fadeUp .72s cubic-bezier(.2,.7,.2,1) both; }
+.d1{ animation-delay:.04s } .d2{ animation-delay:.12s } .d3{ animation-delay:.2s } .d4{ animation-delay:.28s }
+
+/* scroll reveal */
+.reveal{ opacity:0; transform:translateY(40px); }
+.reveal.in{ opacity:1; transform:none; transition:opacity 1.25s cubic-bezier(.16,.7,.2,1), transform 1.25s cubic-bezier(.16,.7,.2,1); }
+.reveal.shown{ opacity:1; transform:none; }
+.ticker{ scrollbar-width:none; -ms-overflow-style:none; -webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 46px), transparent); mask-image:linear-gradient(90deg,#000 calc(100% - 46px), transparent); }
+.ticker::-webkit-scrollbar{ height:0; display:none; }
+
+/* RWA price tape — continuous flowing ticker at top */
+.tape{ position:sticky; top:0; z-index:50; display:flex; align-items:center; margin:0; padding:11px clamp(16px,5vw,40px);
+  border-bottom:1px solid var(--line); background:color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); overflow:hidden;
+  font-family:'Sukhumvit Set','Sukhumvit','Helvetica Neue','Avenir Next',Arial,sans-serif; }
+.tape-view{ position:relative; flex:1 1 auto; min-width:0; overflow:hidden;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 28px,#000 calc(100% - 28px),transparent);
+          mask-image:linear-gradient(90deg,transparent,#000 28px,#000 calc(100% - 28px),transparent); }
+.tape-track{ display:inline-flex; align-items:center; white-space:nowrap; width:max-content; will-change:transform; animation:tapeFlow 38s linear infinite; }
+.tape:hover .tape-track{ animation-play-state:paused; }
+.tape-item{ display:inline-flex; align-items:center; gap:8px; }
+.tape-sym{ font-weight:700; font-size:13px; color:var(--ink); }
+.tape-price{ font-size:13px; font-weight:600; color:var(--muted); }
+.tape-chg{ font-size:12px; font-weight:600; }
+.tape-sep{ margin:0 7px 0 15px; color:var(--faint); opacity:.5; }
+@keyframes tapeFlow{ from{ transform:translateX(0) } to{ transform:translateX(-50%) } }
+@media (max-width:560px){ .tape{ padding:10px 16px } .tape-sym,.tape-price{ font-size:12px } }
+/* keep the sticky price bar pinned through the whole scroll — the component host must grow with content */
+#dc-root>.sc-host{ height:auto !important; min-height:100% !important; }
+
+/* modal */
+@keyframes ovlIn{ from{ opacity:0 } to{ opacity:1 } }
+@keyframes popIn{ from{ opacity:0; transform:translateY(14px) scale(.95) } to{ opacity:1; transform:none } }
+.ovl{ animation:ovlIn .22s ease both; }
+.pop{ animation:popIn .3s cubic-bezier(.2,.85,.25,1) both; }
+.optrow{ animation:fadeUp .4s ease both; }
+
+.chip{ transition:transform .16s ease, box-shadow .22s ease, background .2s ease, color .2s ease, border-color .2s ease; }
+.chip:hover{ transform:translateY(-2px); }
+
+/* dashboard responsive — stack the growth panel under the stats on narrow screens */
+@media (max-width:680px){
+  .dash-top{ flex-direction:column; }
+  .dash-top > div{ flex:0 1 auto !important; }
+  .dash-growth{ border-left:none !important; border-top:1px solid var(--line); }
+  .doc{ padding-top:30px; padding-left:18px; padding-right:18px; }
+  .doc-frame, .doc-frame thead, .doc-frame tbody, .doc-frame tr, .doc-frame td{ display:block; width:100%; }
+}
+@media (max-width:560px){
+  .mhead{ align-items:flex-start; gap:14px; }
+  .mctl{ width:100%; align-items:flex-end; column-gap:10px; row-gap:10px; }
+  .missue{ margin-right:auto; }
+  .missue > div{ justify-content:flex-start !important; }
+}
+@media (max-width:430px){
+  .doc{ padding-left:14px; padding-right:14px; }
+}
+.card{ transition:transform .26s cubic-bezier(.2,.7,.2,1), box-shadow .26s ease, border-color .26s ease; }
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation:none !important; scroll-behavior:auto !important; }
+  .reveal{ opacity:1 !important; transform:none !important; transition:none !important; }
+}
+
+@page{ size:letter; margin:0; }
+@media print{
+  :root,[data-theme="dark"]{ --canvas:#fff !important; --ink:#1A1230 !important; --muted:#5C5572 !important; --faint:#938BA8 !important; --line:#E4DAF3 !important; --paper:#fff !important; --soft:#F5EFFE !important; --chip-bg:#fff !important; --chip-ink:#3a3145 !important; --chip-line:#E4DAF3 !important; --accent:#6D28D9 !important; --accent-2:#9333EA !important; --hl:#7C3AED !important; }
+  html{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  html,body{ margin:0; padding:0; background:#fff !important; }
+  body::before{ display:none !important; }
+  .doc{ max-width:none !important; margin:0 !important; padding:0 0.7in !important; }
+  .rest-grid{ grid-template-columns:1fr !important; }
+  *{ animation:none !important; opacity:1 !important; transform:none !important; }
+  .grad{ -webkit-text-fill-color:#7C3AED !important; color:#7C3AED !important; background:none !important; }
+  #dc-root,.sc-host{ height:auto !important; }
+  .screen-only{ display:none !important; }
+  .watermark,.aurora,#bg-artwork,.veil,.grain{ display:none !important; }
+  .hdr-space,.ftr-space{ display:table-cell; height:0.62in !important; }
+  .running-hdr,.running-ftr{ display:flex !important; justify-content:space-between; align-items:baseline;
+    position:fixed !important; left:0; right:0; margin:0 !important; font-size:9.5px; letter-spacing:.13em;
+    text-transform:uppercase; color:var(--faint); }
+  .running-hdr{ top:0; padding:0.3in 0.7in 0 !important; }
+  .running-ftr{ bottom:0; padding:0 0.7in 0.3in !important; }
+  h1,h2,h3,h4{ break-after:avoid; }
+  article,.callout,.lead,section{ break-inside:avoid; }
+  p,li{ orphans:3; widows:3; }
+}
+</style>
+</helmet>
+
+<img id="bg-artwork" class="bgart" src="assets/bg-artwork.svg" alt="" aria-hidden="true"/>
+<div class="aurora" aria-hidden="true"></div>
+<div class="veil" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+<img class="watermark" src="assets/tokenx-icon.svg" alt="" aria-hidden="true"/>
+
+<!-- ===== RWA PRICE TAPE (full-width flowing ticker, flush to top) ===== -->
+<sc-if value="{{ hasTokens }}" hint-placeholder-val="{{ true }}">
+  <div class="tape screen-only" aria-label="{{ L.tickerTitle }}">
+    <div class="tape-view">
+      <div class="tape-track">
+        <sc-for list="{{ tokens }}" as="t" hint-placeholder-count="6">
+          <span class="tape-item"><span class="tape-sym eyebrow">{{ t.sym }}</span><span class="tape-price">{{ t.price }}</span><span class="tape-chg" style="color:{{ t.col }};">{{ t.arrow }} {{ t.chg }}</span><span class="tape-sep" aria-hidden="true">•</span></span>
+        </sc-for>
+        <sc-for list="{{ tokens }}" as="t" hint-placeholder-count="6">
+          <span class="tape-item" aria-hidden="true"><span class="tape-sym eyebrow">{{ t.sym }}</span><span class="tape-price">{{ t.price }}</span><span class="tape-chg" style="color:{{ t.col }};">{{ t.arrow }} {{ t.chg }}</span><span class="tape-sep">•</span></span>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<main class="doc">
+  <table class="doc-frame" role="presentation">
+    <thead><tr><td class="hdr-space"></td></tr></thead>
+    <tbody><tr><td>
+
+      <div class="running-hdr"><span>{{ L.run }}</span><span>{{ L.issueShort }}</span></div>
+      <div class="running-ftr"><span>tokenx.research</span><span>{{ L.copy }}</span></div>
+
+      <!-- ===== NAMEPLATE ===== -->
+      <header class="fade" style="margin-bottom:30px;">
+        <div class="mhead" style="display:flex; align-items:center; justify-content:space-between; gap:18px; flex-wrap:wrap;">
+          <span style="display:inline-flex; transition:transform .3s cubic-bezier(.2,.8,.2,1);" style-hover="transform:scale(1.04)">
+            <sc-if value="{{ isDark }}" hint-placeholder-val="{{ false }}">
+              <img src="assets/tokenx-logo.svg" alt="TokenX" style="height:34px; width:auto; display:block;"/>
+            </sc-if>
+            <sc-if value="{{ isLight }}" hint-placeholder-val="{{ true }}">
+              <img src="assets/tokenx-logo-dark.svg" alt="TokenX" style="height:34px; width:auto; display:block;"/>
+            </sc-if>
+          </span>
+          <div class="mctl" style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; justify-content:flex-end;">
+            <div class="missue" style="position:relative;">
+              <div class="eyebrow" style="display:flex; align-items:center; justify-content:flex-end; gap:7px; font-size:11px; letter-spacing:.26em; font-weight:600; text-transform:uppercase;">
+                <span class="pulse" style="width:6px; height:6px; border-radius:50%; background:var(--accent-2);"></span>
+                <span class="grad">{{ L.run }}</span>
+              </div>
+              <div style="display:flex; align-items:center; justify-content:flex-end; gap:9px; margin-top:4px;">
+                <button class="screen-only" onClick="{{ goOlder }}" disabled="{{ olderDisabled }}" title="{{ L.olderTip }}" style="{{ olderStyle }}" style-hover="border-color:var(--accent); color:var(--accent)">
+                  <svg viewBox="0 0 24 24" style="width:13px; height:13px;" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <button class="screen-only" onClick="{{ toggleCal }}" title="{{ L.issueTip }}" style="display:inline-flex; align-items:center; gap:6px; background:none; border:none; padding:2px 2px; margin:0; font-family:inherit; cursor:pointer; color:var(--muted); font-size:12px; white-space:nowrap; transition:color .2s ease;" style-hover="color:var(--accent)">
+                  <svg viewBox="0 0 24 24" style="width:13px; height:13px; flex:none;" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9h18M8 2.5v4M16 2.5v4"/></svg>
+                  {{ L.issueLong }}
+                </button>
+                <button class="screen-only" onClick="{{ goNewer }}" disabled="{{ newerDisabled }}" title="{{ L.newerTip }}" style="{{ newerStyle }}" style-hover="border-color:var(--accent); color:var(--accent)">
+                  <svg viewBox="0 0 24 24" style="width:13px; height:13px;" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                </button>
+              </div>
+
+              <sc-if value="{{ calOpen }}" hint-placeholder-val="{{ false }}">
+                <div class="screen-only" onClick="{{ closeCal }}" style="position:fixed; inset:0; z-index:150;"></div>
+                <div class="screen-only pop" style="position:absolute; top:calc(100% + 12px); right:0; z-index:160; width:300px; max-width:88vw; background:var(--paper); border:1px solid var(--line); border-radius:18px; box-shadow:0 32px 70px -26px rgba(20,4,50,.7); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); padding:14px; text-align:left;">
+                  <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:12px;">
+                    <button onClick="{{ prevMonth }}" title="{{ L.olderTip }}" style="display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; flex:none; border-radius:8px; border:1.5px solid var(--line); background:var(--paper); color:var(--ink); cursor:pointer; padding:0; transition:border-color .2s ease, color .2s ease;" style-hover="border-color:var(--accent); color:var(--accent)">
+                      <svg viewBox="0 0 24 24" style="width:13px; height:13px;" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                    </button>
+                    <span style="font-size:13.5px; font-weight:700; color:var(--ink);">{{ calTitle }}</span>
+                    <button onClick="{{ nextMonth }}" title="{{ L.newerTip }}" style="display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; flex:none; border-radius:8px; border:1.5px solid var(--line); background:var(--paper); color:var(--ink); cursor:pointer; padding:0; transition:border-color .2s ease, color .2s ease;" style-hover="border-color:var(--accent); color:var(--accent)">
+                      <svg viewBox="0 0 24 24" style="width:13px; height:13px;" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                    </button>
+                  </div>
+                  <div style="display:grid; grid-template-columns:repeat(7,1fr); gap:2px; margin-bottom:5px;">
+                    <sc-for list="{{ weekdays }}" as="w" hint-placeholder-count="7">
+                      <span style="text-align:center; font-size:10.5px; font-weight:600; color:var(--faint); padding:3px 0;">{{ w.label }}</span>
+                    </sc-for>
+                  </div>
+                  <div style="display:grid; grid-template-columns:repeat(7,1fr); gap:3px;">
+                    <sc-for list="{{ calCells }}" as="c" hint-placeholder-count="35">
+                      <button onClick="{{ c.onClick }}" disabled="{{ c.disabled }}" style="{{ c.style }}">{{ c.label }}</button>
+                    </sc-for>
+                  </div>
+                  <div style="display:flex; align-items:center; gap:8px; margin-top:13px; padding-top:11px; border-top:1px solid var(--line);">
+                    <span style="width:11px; height:11px; border-radius:4px; flex:none; background:color-mix(in srgb, var(--accent) 22%, transparent);"></span>
+                    <span style="font-size:11.5px; color:var(--faint); line-height:1.4;">{{ calHint }}</span>
+                  </div>
+                </div>
+              </sc-if>
+            </div>
+            <button class="screen-only" onClick="{{ toggleTheme }}" title="{{ L.themeTip }}" style="display:inline-flex; align-items:center; justify-content:center; width:42px; height:42px; flex:none; border:1.5px solid var(--line); border-radius:14px; background:var(--paper); cursor:pointer; color:var(--ink); transition:transform .25s ease, border-color .25s ease, color .25s ease;" style-hover="transform:translateY(-2px); border-color:var(--accent); color:var(--accent)">
+              <sc-if value="{{ isDark }}" hint-placeholder-val="{{ false }}">
+                <svg viewBox="0 0 24 24" style="width:18px; height:18px;" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+              </sc-if>
+              <sc-if value="{{ isLight }}" hint-placeholder-val="{{ true }}">
+                <svg viewBox="0 0 24 24" style="width:17px; height:17px;" fill="currentColor"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+              </sc-if>
+            </button>
+            <button class="screen-only" onClick="{{ openLang }}" style="display:inline-flex; align-items:center; gap:8px; height:42px; padding:0 15px; border:1.5px solid var(--line); border-radius:14px; background:var(--paper); cursor:pointer; font-family:inherit; font-size:12.5px; font-weight:600; color:var(--ink); transition:transform .25s ease, border-color .25s ease, color .25s ease;" style-hover="transform:translateY(-2px); border-color:var(--accent); color:var(--accent)">
+              <svg viewBox="0 0 24 24" style="width:16px; height:16px;" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 2.5 15.3 0 18M12 3c-2.5 2.7-2.5 15.3 0 18"/></svg>
+              {{ L.langName }}
+              <svg viewBox="0 0 24 24" style="width:13px; height:13px;" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+          </div>
+        </div>
+        <div style="margin-top:20px; height:2px; border-radius:2px; background:linear-gradient(90deg,var(--accent),var(--accent-2) 38%,transparent);"></div>
+      </header>
+
+      <!-- ===== ISSUE TITLE + STANDFIRST ===== -->
+      <h1 class="fade d1 hero-t" style="font-size:clamp(30px,4.6vw,42px); font-weight:700; line-height:1.1; letter-spacing:-.02em; max-width:20ch;">{{ L.h1a }}<span class="grad gradFlow">{{ L.h1b }}</span>{{ L.h1c }}</h1>
+      <p class="fade d2 hero-t" style="margin:16px 0 0; font-size:17.5px; line-height:1.66; color:var(--muted); max-width:62ch;">{{ L.standfirst }}</p>
+
+      <!-- ===== FILTER TABS ===== -->
+      <div class="screen-only fade d3" style="margin-top:30px;">
+        <div style="display:flex; align-items:flex-end; gap:4px; flex-wrap:wrap; border-bottom:1px solid var(--line);">
+          <sc-for list="{{ chips }}" as="chip" hint-placeholder-count="6">
+            <button onClick="{{ chip.onClick }}" style="{{ chip.style }}" style-hover="background:var(--soft); color:var(--ink)">
+              <span style="{{ chip.dotStyle }}"></span>{{ chip.label }}
+              <span style="{{ chip.underlineStyle }}"></span>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+
+      <div class="results">
+      <!-- ===== OVERVIEW DASHBOARD (All view) ===== -->
+      <sc-if value="{{ showDash }}" hint-placeholder-val="{{ true }}">
+        <section class="reveal" style="margin-top:30px; border:1px solid var(--line); border-radius:22px; background:var(--paper); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); overflow:hidden;">
+          <div class="dash-top" style="display:flex; flex-wrap:wrap;">
+            <div style="flex:1 1 300px; min-width:0; padding:24px clamp(20px,2.5vw,28px);">
+              <div class="eyebrow" style="display:inline-flex; align-items:center; gap:8px; font-size:11px; letter-spacing:.16em; font-weight:600; text-transform:uppercase; color:var(--faint); margin-bottom:18px;">
+                <span class="pulse" style="width:6px; height:6px; border-radius:50%; background:var(--accent-2);"></span>{{ L.dashOverview }}
+              </div>
+              <div style="display:flex; gap:16px 32px; flex-wrap:wrap;">
+                <sc-for list="{{ stats }}" as="st" hint-placeholder-count="3">
+                  <div>
+                    <div class="eyebrow grad statnum" data-to="{{ st.value }}" style="font-size:36px; font-weight:700; line-height:1;">{{ st.value }}</div>
+                    <div style="font-size:12.5px; color:var(--muted); margin-top:6px;">{{ st.label }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <div class="dash-growth" style="flex:1 1 320px; min-width:0; padding:24px clamp(20px,2.5vw,28px); border-left:1px solid var(--line);">
+              <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+                <div>
+                  <div class="eyebrow" style="font-size:11px; letter-spacing:.13em; font-weight:600; text-transform:uppercase; color:var(--faint);">{{ growth.label }}</div>
+                  <div class="eyebrow" style="font-size:27px; font-weight:700; margin-top:6px;">{{ growth.value }}</div>
+                </div>
+                <span class="eyebrow" style="display:inline-flex; align-items:center; gap:4px; padding:5px 11px; border-radius:999px; font-size:12px; font-weight:600; color:{{ growth.col }}; background:color-mix(in srgb, {{ growth.col }} 16%, transparent);">{{ growth.arrow }} {{ growth.delta }}</span>
+              </div>
+              <svg viewBox="0 0 320 90" preserveAspectRatio="none" style="width:100%; height:84px; display:block; margin-top:16px;">
+                <path d="{{ growth.area }}" style="fill:var(--accent); fill-opacity:.15;"></path>
+                <path d="{{ growth.line }}" style="fill:none; stroke:var(--accent); stroke-width:2.4; stroke-linejoin:round; stroke-linecap:round;"></path>
+              </svg>
+            </div>
+          </div>
+          <!-- ราคาเหรียญ RWA: ย้ายไปเป็น ticker tape ไหลต่อเนื่องด้านบน (.tape) -->
+        </section>
+      </sc-if>
+
+      <!-- ===== SECTIONS ===== -->
+      <sc-for list="{{ sections }}" as="sec" hint-placeholder-count="5">
+        <section style="margin-top:46px;">
+          <div class="reveal" style="display:flex; align-items:center; gap:14px; margin-bottom:22px;">
+            <span class="eyebrow" style="display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; flex:none; border-radius:12px; color:#fff; background:linear-gradient(135deg,{{ sec.color }},var(--accent-2)); box-shadow:0 10px 24px -10px {{ sec.color }};">
+              <sc-if value="{{ sec.isRwa }}" hint-placeholder-val="{{ true }}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:19px; height:19px;"><path d="M3 9.5 12 4l9 5.5"/><path d="M5 9.5V19M9 9.5V19M15 9.5V19M19 9.5V19"/><path d="M3 19h18"/></svg>
+              </sc-if>
+              <sc-if value="{{ sec.isTok }}" hint-placeholder-val="{{ false }}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:19px; height:19px;"><path d="M12 3 3 7.5 12 12l9-4.5L12 3Z"/><path d="M3 12.5 12 17l9-4.5"/></svg>
+              </sc-if>
+              <sc-if value="{{ sec.isChain }}" hint-placeholder-val="{{ false }}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:19px; height:19px;"><path d="M12 2.8 4.5 7v10L12 21.2 19.5 17V7L12 2.8Z"/><path d="M4.5 7 12 11.2 19.5 7M12 11.2V21.2"/></svg>
+              </sc-if>
+              <sc-if value="{{ sec.isFin }}" hint-placeholder-val="{{ false }}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:19px; height:19px;"><path d="M3 16.5 9 10l4 4 7.5-7.5"/><path d="M15.5 6.5H21V12"/></svg>
+              </sc-if>
+              <sc-if value="{{ sec.isSet }}" hint-placeholder-val="{{ false }}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:19px; height:19px;"><rect x="3.5" y="7" width="5" height="7" rx="1"/><path d="M6 4v3M6 14v3"/><rect x="15.5" y="10" width="5" height="7" rx="1"/><path d="M18 7v3M18 17v3"/></svg>
+              </sc-if>
+            </span>
+            <h3 style="font-size:15px; letter-spacing:.16em; font-weight:700; text-transform:uppercase; color:var(--ink); white-space:nowrap;">{{ sec.heading }}</h3>
+            <span style="flex:1; height:1px; background:linear-gradient(90deg,var(--line),transparent);"></span>
+          </div>
+
+          <!-- LEAD STORY -->
+          <article class="lead card reveal" style="position:relative; overflow:hidden; background:{{ sec.leadBg }}; border:1px solid var(--line); border-radius:20px; padding:26px clamp(20px,2.6vw,30px); margin-bottom:26px;" style-hover="transform:translateY(-3px); box-shadow:var(--card-shadow); border-color:var(--accent)">
+            <span style="position:absolute; left:0; top:0; bottom:0; width:4px; background:linear-gradient(180deg,{{ sec.color }},var(--accent-2));"></span>
+            <div class="eyebrow" style="display:inline-flex; align-items:center; gap:8px; font-size:10.5px; letter-spacing:.16em; font-weight:600; text-transform:uppercase; color:var(--accent); margin-bottom:12px;">
+              <span style="width:7px; height:7px; border-radius:50%; background:{{ sec.color }};"></span>{{ sec.lead.featuredLabel }}
+            </div>
+            <h2 style="font-size:clamp(24px,2.8vw,30px); font-weight:700; line-height:1.18; letter-spacing:-.015em; max-width:26ch;">{{ sec.lead.titleA }}<span class="grad">{{ sec.lead.titleB }}</span>{{ sec.lead.titleC }}</h2>
+            <sc-for list="{{ sec.lead.bodyParts }}" as="para" hint-placeholder-count="1">
+              <p style="margin:13px 0 0; font-size:17px; line-height:1.72; color:var(--ink);">{{ para }}</p>
+            </sc-for>
+
+            <sc-if value="{{ sec.lead.hasHl }}" hint-placeholder-val="{{ true }}">
+              <div style="margin-top:14px;">
+                <div style="border-left:4px solid {{ sec.color }}; background:var(--soft); border-radius:0 12px 12px 0; padding:15px 19px;">
+                  <sc-if value="{{ sec.lead.hlIsData }}" hint-placeholder-val="{{ true }}">
+                    <div style="display:flex; align-items:center; gap:16px;">
+                      <div style="font-size:28px; font-weight:700; color:var(--accent); line-height:1; white-space:nowrap; letter-spacing:-.01em;">{{ sec.lead.hlValue }}</div>
+                      <div>
+                        <div style="font-size:11px; letter-spacing:.15em; text-transform:uppercase; font-weight:700; color:var(--accent);">{{ sec.lead.hlLabel }}</div>
+                        <div style="font-size:15px; line-height:1.5; color:var(--ink); margin-top:3px;">{{ sec.lead.hlNote }}</div>
+                      </div>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ sec.lead.hlIsKnow }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex; gap:13px; align-items:flex-start;">
+                      <svg viewBox="0 0 24 24" style="flex:none; width:20px; height:20px; margin-top:1px;"><path d="M12 2a7 7 0 0 0-4 12.7V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.3A7 7 0 0 0 12 2Z" fill="#E4F700"/><rect x="9" y="19" width="6" height="2" rx="1" fill="#45E8E0"/></svg>
+                      <div>
+                        <div style="font-size:11px; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:{{ sec.color }};">{{ sec.lead.hlLabel }}</div>
+                        <div style="font-size:15px; line-height:1.6; color:var(--ink); margin-top:4px;">{{ sec.lead.hlNote }}</div>
+                      </div>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ sec.lead.hlIsTakeaway }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex; gap:13px; align-items:flex-start;">
+                      <svg viewBox="0 0 24 24" style="flex:none; width:20px; height:20px; margin-top:1px;" fill="{{ sec.color }}"><path d="m12 2 2.9 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 7.1-1.01L12 2Z"/></svg>
+                      <div>
+                        <div style="font-size:11px; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:{{ sec.color }};">{{ sec.lead.hlLabel }}</div>
+                        <div style="font-size:16.5px; font-weight:600; line-height:1.55; color:var(--ink); margin-top:5px;">{{ sec.lead.hlNote }}</div>
+                      </div>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ sec.lead.hlIsQuote }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex; gap:13px; align-items:flex-start;">
+                      <div style="font-size:40px; line-height:.66; font-weight:800; color:{{ sec.color }};">&#8220;</div>
+                      <div>
+                        <div style="font-size:16.5px; font-style:italic; line-height:1.6; color:var(--ink);">{{ sec.lead.hlNote }}</div>
+                        <div style="font-size:13px; color:var(--faint); margin-top:8px;">&#8212; {{ sec.lead.hlBy }}</div>
+                      </div>
+                    </div>
+                  </sc-if>
+                </div>
+              </div>
+            </sc-if>
+
+            <a class="ref" href="{{ sec.lead.url }}" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:8px; margin-top:16px; font-size:13px; color:var(--faint);">
+              <span style="font-style:italic;">{{ sec.lead.source }} · {{ sec.lead.time }}</span>
+              <span style="color:var(--line);">|</span>
+              <span class="reftxt" style="color:var(--accent); font-weight:600;">{{ L.ref }} ↗</span>
+            </a>
+          </article>
+
+          <!-- REST -->
+          <div class="rest-grid" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr)); gap:22px; align-items:start;">
+            <sc-for list="{{ sec.rest }}" as="s" hint-placeholder-count="2">
+              <article class="card reveal" style="position:relative; background:var(--paper); border:1px solid var(--line); border-radius:18px; padding:24px;" style-hover="transform:translateY(-5px); box-shadow:var(--card-shadow); border-color:var(--accent)">
+                <span style="display:block; width:36px; height:4px; border-radius:3px; background:linear-gradient(90deg,{{ s.color }},transparent); margin-bottom:16px;"></span>
+                <h4 style="font-size:20px; font-weight:700; line-height:1.28;">{{ s.titleA }}<span class="grad">{{ s.titleB }}</span>{{ s.titleC }}</h4>
+                <p style="margin:9px 0 0; font-size:16.5px; line-height:1.68; color:var(--ink);">{{ s.body }}</p>
+
+                <sc-if value="{{ s.hasHl }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top:14px;">
+                    <div style="border-left:4px solid {{ s.color }}; background:var(--soft); border-radius:0 12px 12px 0; padding:15px 19px;">
+                      <sc-if value="{{ s.hlIsData }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex; align-items:center; gap:16px;">
+                          <div style="font-size:28px; font-weight:700; color:var(--accent); line-height:1; white-space:nowrap; letter-spacing:-.01em;">{{ s.hlValue }}</div>
+                          <div>
+                            <div style="font-size:11px; letter-spacing:.15em; text-transform:uppercase; font-weight:700; color:var(--accent);">{{ s.hlLabel }}</div>
+                            <div style="font-size:15px; line-height:1.5; color:var(--ink); margin-top:3px;">{{ s.hlNote }}</div>
+                          </div>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{ s.hlIsKnow }}" hint-placeholder-val="{{ true }}">
+                        <div style="display:flex; gap:13px; align-items:flex-start;">
+                          <svg viewBox="0 0 24 24" style="flex:none; width:20px; height:20px; margin-top:1px;"><path d="M12 2a7 7 0 0 0-4 12.7V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.3A7 7 0 0 0 12 2Z" fill="#E4F700"/><rect x="9" y="19" width="6" height="2" rx="1" fill="#45E8E0"/></svg>
+                          <div>
+                            <div style="font-size:11px; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:{{ s.color }};">{{ s.hlLabel }}</div>
+                            <div style="font-size:15px; line-height:1.6; color:var(--ink); margin-top:4px;">{{ s.hlNote }}</div>
+                          </div>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{ s.hlIsTakeaway }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex; gap:13px; align-items:flex-start;">
+                          <svg viewBox="0 0 24 24" style="flex:none; width:20px; height:20px; margin-top:1px;" fill="{{ s.color }}"><path d="m12 2 2.9 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 7.1-1.01L12 2Z"/></svg>
+                          <div>
+                            <div style="font-size:11px; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:{{ s.color }};">{{ s.hlLabel }}</div>
+                            <div style="font-size:16.5px; font-weight:600; line-height:1.55; color:var(--ink); margin-top:5px;">{{ s.hlNote }}</div>
+                          </div>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{ s.hlIsQuote }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex; gap:13px; align-items:flex-start;">
+                          <div style="font-size:40px; line-height:.66; font-weight:800; color:{{ s.color }};">&#8220;</div>
+                          <div>
+                            <div style="font-size:16.5px; font-style:italic; line-height:1.6; color:var(--ink);">{{ s.hlNote }}</div>
+                            <div style="font-size:13px; color:var(--faint); margin-top:8px;">&#8212; {{ s.hlBy }}</div>
+                          </div>
+                        </div>
+                      </sc-if>
+                    </div>
+                  </div>
+                </sc-if>
+
+                <a class="ref" href="{{ s.url }}" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:8px; margin-top:14px; font-size:13px; color:var(--faint);">
+                  <span style="font-style:italic;">{{ s.source }} · {{ s.time }}</span>
+                  <span style="color:var(--line);">|</span>
+                  <span class="reftxt" style="color:var(--accent); font-weight:600;">{{ L.ref }} ↗</span>
+                </a>
+              </article>
+            </sc-for>
+          </div>
+        </section>
+      </sc-for>
+
+      <!-- ===== IN BRIEF ===== -->
+      <sc-if value="{{ showBrief }}" hint-placeholder-val="{{ true }}">
+        <section class="callout reveal" style="position:relative; overflow:hidden; margin-top:52px; border:1px solid var(--line); border-radius:22px; padding:30px clamp(20px,3vw,34px); background:var(--soft);">
+          <div style="display:flex; align-items:center; gap:11px; margin-bottom:20px;">
+            <img src="assets/tokenx-icon.svg" alt="" style="width:20px; height:auto;"/>
+            <h3 class="eyebrow" style="font-size:12.5px; letter-spacing:.16em; font-weight:600; text-transform:uppercase;"><span class="grad">{{ L.inBrief }}</span></h3>
+          </div>
+          <ul style="margin:0; padding:0; list-style:none; display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:16px 34px;">
+            <sc-for list="{{ briefs }}" as="b" hint-placeholder-count="4">
+              <li style="display:flex; gap:13px; align-items:flex-start;">
+                <span style="margin-top:8px; flex:none; width:9px; height:9px; border-radius:50%; background:{{ b.color }}; box-shadow:0 0 0 4px color-mix(in srgb, {{ b.color }} 18%, transparent);"></span>
+                <a class="ref" href="{{ b.url }}" target="_blank" rel="noopener" style="font-size:16px; line-height:1.56; color:var(--ink);">
+                  <strong style="font-weight:600;">{{ b.strong }}</strong><span class="reftxt">{{ b.text }}</span> <span style="color:var(--faint); font-style:italic;">— {{ b.src }} ↗</span>
+                </a>
+              </li>
+            </sc-for>
+          </ul>
+        </section>
+      </sc-if>
+      </div><!-- /results -->
+
+      <!-- ===== FOOTER ===== -->
+      <footer class="reveal" style="margin-top:60px; padding-top:34px; border-top:1px solid var(--line);">
+        <div style="display:flex; gap:28px 44px; flex-wrap:wrap; align-items:flex-start;">
+          <div style="flex:0 0 auto; display:flex; flex-direction:column; align-items:flex-start; gap:15px;">
+            <sc-if value="{{ isDark }}" hint-placeholder-val="{{ false }}">
+              <img src="assets/tokenx-logo.svg" alt="TokenX" style="height:30px; width:auto; display:block;"/>
+            </sc-if>
+            <sc-if value="{{ isLight }}" hint-placeholder-val="{{ true }}">
+              <img src="assets/tokenx-logo-dark.svg" alt="TokenX" style="height:30px; width:auto; display:block;"/>
+            </sc-if>
+            <div style="display:flex; gap:6px;">
+              <span style="width:14px; height:4px; border-radius:2px; background:#E4F700;"></span>
+              <span style="width:14px; height:4px; border-radius:2px; background:#45E8E0;"></span>
+              <span style="width:14px; height:4px; border-radius:2px; background:#CE5FFC;"></span>
+              <span style="width:14px; height:4px; border-radius:2px; background:var(--accent);"></span>
+            </div>
+          </div>
+          <div style="flex:1 1 380px; min-width:0;">
+            <div class="eyebrow" style="font-size:11px; letter-spacing:.2em; font-weight:700; text-transform:uppercase; margin-bottom:13px;"><span class="grad">About Token&#8201;X</span></div>
+            <p style="margin:0 0 11px; font-size:14px; line-height:1.74; color:var(--muted); max-width:76ch;">Token&#8201;X is a subsidiary under the &#8220;Mothership Vision&#8221; of SCBX. We were founded in January 2021, with a vision to be Tokenization Success Partner for businesses in Southeast Asia.</p>
+            <p style="margin:0 0 11px; font-size:14px; line-height:1.74; color:var(--muted); max-width:76ch;">We provide our partners with end&#8209;to&#8209;end tokenization services, from ideation to execution &#8212; with experienced team members who are knowledgeable in both the traditional and digital world.</p>
+            <p style="margin:0; font-size:14px; line-height:1.74; color:var(--ink); font-weight:500; max-width:76ch;">We are your complete gateway to the new era of the digital&#8209;asset world.</p>
+          </div>
+        </div>
+        <div style="margin-top:30px; padding-top:18px; border-top:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap;">
+          <span class="eyebrow" style="font-size:11px; letter-spacing:.09em; color:var(--faint);">{{ L.copy }}</span>
+          <span class="eyebrow" style="font-size:11px; letter-spacing:.09em; color:var(--faint);">design by <span class="grad" style="font-weight:700; letter-spacing:.04em;">0xTnk</span></span>
+        </div>
+      </footer>
+
+    </td></tr></tbody>
+    <tfoot><tr><td class="ftr-space"></td></tr></tfoot>
+  </table>
+
+  <!-- ===== LANGUAGE MODAL ===== -->
+  <sc-if value="{{ langOpen }}" hint-placeholder-val="{{ false }}">
+    <div class="screen-only ovl" onClick="{{ closeLang }}" style="position:fixed; inset:0; z-index:200; background:rgba(10,6,28,.6); backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px); display:flex; align-items:center; justify-content:center; padding:24px;">
+      <div class="pop" onClick="{{ stop }}" style="width:350px; max-width:100%; background:var(--paper); color:var(--ink); border:1px solid var(--line); border-radius:22px; overflow:hidden; box-shadow:0 40px 90px -28px rgba(20,4,50,.7); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); font-family:'Sukhumvit Set','Sukhumvit','Helvetica Neue',Arial,sans-serif;">
+        <div style="position:relative; padding:24px 26px; background:linear-gradient(120deg,#1A0B45,#3A1063 55%,#5A1C7A);">
+          <img src="assets/tokenx-icon.svg" alt="" style="width:28px; height:auto; margin-bottom:12px;"/>
+          <div style="color:#fff; font-size:19px; font-weight:700;">{{ L.modalTitle }}</div>
+          <div style="color:rgba(255,255,255,.62); font-size:13px; margin-top:3px;">{{ L.modalSub }}</div>
+          <button onClick="{{ closeLang }}" style="position:absolute; top:18px; right:18px; width:32px; height:32px; border-radius:50%; border:none; background:rgba(255,255,255,.14); color:#fff; cursor:pointer; font-size:17px; line-height:1; display:flex; align-items:center; justify-content:center; transition:background .2s ease, transform .2s ease;" style-hover="background:rgba(255,255,255,.26); transform:rotate(90deg)">×</button>
+        </div>
+        <div style="padding:16px;">
+          <sc-for list="{{ langOptions }}" as="opt" hint-placeholder-count="2">
+            <button class="optrow" onClick="{{ opt.onClick }}" style="{{ opt.style }}">
+              <span style="display:flex; flex-direction:column; align-items:flex-start;">
+                <span style="font-size:16px; font-weight:700;">{{ opt.name }}</span>
+                <span style="font-size:12.5px; color:var(--muted);">{{ opt.sub }}</span>
+              </span>
+              <span style="{{ opt.checkStyle }}">✓</span>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</main>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:900,&quot;height&quot;:1700},&quot;accent&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Purple&quot;,&quot;Magenta&quot;,&quot;Navy&quot;],&quot;default&quot;:&quot;Purple&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;showInBrief&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  state = { lang: 'th', topic: 'all', langOpen: false, issueIdx: 0, calOpen: false, calY: null, calM: null, ready: false, theme: 'dark' };
+
+  componentDidMount(){ this._lastTopic = this.state.topic; this._lastIssue = this.state.issueIdx; this.applyAccent(); this.waitData(0); this.revealScan(); this.countUp(); }
+  componentDidUpdate(){
+    this.applyAccent(); this.revealScan(); this.countUp();
+    if (this._lastTopic !== this.state.topic || this._lastIssue !== this.state.issueIdx){
+      this._lastTopic = this.state.topic; this._lastIssue = this.state.issueIdx;
+      const el = document.querySelector('.results');
+      if (el){ el.classList.remove('swap'); void el.offsetWidth; el.classList.add('swap'); }
+    }
+  }
+  componentWillUnmount(){ if (this._io) this._io.disconnect(); }
+
+  countUp(){
+    document.querySelectorAll('.statnum:not([data-counted])').forEach(el => {
+      const raw = el.getAttribute('data-to') || el.textContent;
+      el.setAttribute('data-counted','1');
+      const num = parseFloat(String(raw).replace(/[^0-9.]/g,''));
+      if (!isFinite(num)) return;
+      const suffix = String(raw).replace(/[0-9.,\s]/g,'');
+      const dur = 950, t0 = performance.now();
+      const step = (t) => {
+        const p = Math.min(1, (t - t0) / dur);
+        const e = 1 - Math.pow(1 - p, 3);
+        if (p < 1){ el.textContent = Math.round(num * e) + suffix; requestAnimationFrame(step); }
+        else el.textContent = String(raw);
+      };
+      requestAnimationFrame(step);
+    });
+  }
+
+  revealScan(){
+    if (!this._io){
+      this._io = new IntersectionObserver((ents) => {
+        ents.forEach(e => { if (e.isIntersecting){ e.target.classList.add('in'); this._io.unobserve(e.target); } });
+      }, { rootMargin: '0px 0px -10% 0px', threshold: 0.05 });
+    }
+    const vh = window.innerHeight || 800;
+    document.querySelectorAll('.reveal:not(.in)').forEach(el => {
+      const r = el.getBoundingClientRect();
+      // already in view → show instantly (no transition that could freeze)
+      if (r.top < vh * 0.92 && r.bottom > 0){ el.classList.add('shown'); }
+      // below (or above) the fold → fade in as it scrolls into view
+      else { this._io.observe(el); }
+    });
+  }
+
+  waitData(n){
+    if (window.RWA_NEWS){ this.setState({ ready: true }); return; }
+    if (n > 120) return;
+    setTimeout(() => this.waitData(n + 1), 50);
+  }
+
+  applyAccent(){
+    const theme = this.state.theme;
+    const key = theme + '|' + (this.props.accent || 'Purple');
+    if (this._appliedKey === key) return;
+    this._appliedKey = key;
+    document.documentElement.setAttribute('data-theme', theme);
+    // [accent, accent-2, hl, soft]
+    const light = {
+      Purple:  ['#6D28D9','#C026D3','#9333EA','#F2EAFE'],
+      Magenta: ['#A21CAF','#DB2777','#C026D3','#FBE9FB'],
+      Navy:    ['#4338CA','#7C3AED','#5B53E0','#ECEBFE'],
+    };
+    const dark = {
+      Purple:  ['#B79BFF','#F0ABFC','#C9B0FF','rgba(255,255,255,.055)'],
+      Magenta: ['#E7A6FF','#FBA8E0','#EFB9FF','rgba(255,255,255,.055)'],
+      Navy:    ['#9CA8FF','#C9B0FF','#AEB6FF','rgba(255,255,255,.055)'],
+    };
+    const set = theme === 'dark' ? dark : light;
+    const a = set[this.props.accent] || set.Purple;
+    const r = document.documentElement.style;
+    r.setProperty('--accent', a[0]); r.setProperty('--accent-2', a[1]);
+    r.setProperty('--hl', a[2]); r.setProperty('--soft', a[3]);
+  }
+
+  TOPIC(){
+    return {
+      rwa:          { color:'#A855F7', en:'Real-world assets',     th:'Real World Asset' },
+      tokenization: { color:'#D946EF', en:'Tokenization',          th:'Tokenization' },
+      blockchain:   { color:'#2DD4BF', en:'Blockchain technology', th:'Blockchain' },
+      fintech:      { color:'#F59E0B', en:'Financial technology',  th:'Fintech' },
+      set:          { color:'#6366F1', en:'Capital Market Thailand · Digital assets', th:'ตลาดทุนไทย · Digital Asset' },
+    };
+  }
+
+  dict(lang, meta){
+    const D = meta || { issue:0, dateEN:'', dateTH:'' };
+    if (lang === 'th') return {
+      run:'WEEKLY ROUNDUP', issueShort:'ฉบับที่ '+D.issue, issueLong:'ฉบับที่ '+D.issue+' · '+D.dateTH,
+      copy:'© 2026 TokenX Research', langName:'ไทย',
+      h1a:'สรุปสัปดาห์แห่งวงการ ', h1b:'Tokenized Finance', h1c:'',
+      standfirst:'Real World Asset, Tokenization, โครงสร้าง Blockchain และ Fintech ที่สร้างอยู่บนนั้น รวมข่าวที่ขยับตลาดในสัปดาห์นี้',
+      filter:'กรองหัวข้อ', ref:'อ่านต่อ', inBrief:'ข่าวอื่นในสัปดาห์นี้ โดยสรุป', featured:'ข่าวเด่น',
+      footerNote:'สรุปข่าวรายสัปดาห์ด้าน Real World Asset, Tokenization และการเงินบนเชน — คัดสรร ไม่ใช่ทั้งหมด',
+      modalTitle:'เลือกภาษา', modalSub:'Choose your language', themeTip:'สลับธีมสว่าง / มืด',
+      dashOverview:'ภาพรวมสัปดาห์นี้', tickerTitle:'ราคาเหรียญ RWA', tickerHint:'สแน็ปช็อตล่าสุด · เลื่อนดูได้',
+      archive:'ฉบับย้อนหลัง', issueTip:'เลือกฉบับ / สัปดาห์', latestTag:'ล่าสุด', olderTip:'ฉบับก่อนหน้า (เก่ากว่า)', newerTip:'ฉบับถัดไป (ใหม่กว่า)', calHint:'แตะวันที่ไฮไลต์เพื่อเปิดฉบับของสัปดาห์นั้น',
+    };
+    return {
+      run:'WEEKLY ROUNDUP', issueShort:'Issue '+D.issue, issueLong:'Issue №\u00A0'+D.issue+' · '+D.dateEN,
+      copy:'© 2026 TokenX Research', langName:'English',
+      h1a:'The week in ', h1b:'tokenized', h1c:' finance',
+      standfirst:'Real-world assets, tokenization rails, blockchain infrastructure, and the financial technology built on top of them — the stories that moved the market this week, curated by the TokenX research desk.',
+      filter:'Filter', ref:'Read more', inBrief:'Also this week, in brief', featured:'Featured',
+      footerNote:'A weekly digest of real-world assets, tokenization, and on-chain finance. Curated, not exhaustive.',
+      modalTitle:'Choose language', modalSub:'เลือกภาษาที่ต้องการ', themeTip:'Toggle light / dark theme',
+      dashOverview:'This week at a glance', tickerTitle:'RWA token prices', tickerHint:'latest snapshot · swipe',
+      archive:'Past issues', issueTip:'Choose issue / week', latestTag:'Latest', olderTip:'Older issue', newerTip:'Newer issue', calHint:'Tap a highlighted date to open that issue',
+    };
+  }
+
+  resolveStory(s, lang, color){
+    const p = s[lang];
+    const body = Array.isArray(p.body) ? p.body : [p.body];
+    const hl = p.highlight || (s.highlight && s.highlight[lang]) || {};
+    return {
+      titleA: p.title[0], titleB: p.title[1] || '', titleC: p.title[2] || '',
+      body: body[0], bodyParts: body,
+      source: s.source, time: s.time, url: s.url, color,
+      hasHl: !!s.hlType, hlVariant: s.hlType || '',
+      hlIsData: s.hlType === 'data', hlIsKnow: s.hlType === 'know', hlIsTakeaway: s.hlType === 'takeaway', hlIsQuote: s.hlType === 'quote',
+      hlLabel: hl.label || '', hlValue: hl.value || '', hlNote: hl.note || '',
+      hlBy: hl.by || '', hlCaption: hl.caption || '', hlSlot: s.slot || '',
+    };
+  }
+
+  renderVals(){
+    const lang = this.state.lang;
+    const sel = this.state.topic;
+    const TOPIC = this.TOPIC();
+    const archive = window.RWA_NEWS_ARCHIVE || (window.RWA_NEWS ? [window.RWA_NEWS] : []);
+    const issueIdx = Math.min(this.state.issueIdx, Math.max(0, archive.length - 1));
+    const N = archive[issueIdx] || null;
+    const meta = N ? N.meta : { issue:0, dateEN:'', dateTH:'' };
+    const L = this.dict(lang, meta);
+
+    const order = ['all','rwa','tokenization','blockchain','fintech','set'];
+    const chipLabel = {
+      all:{en:'All',th:'ทั้งหมด'}, rwa:{en:'RWA',th:'RWA'},
+      tokenization:{en:'Tokenization',th:'Token'}, blockchain:{en:'Blockchain',th:'Blockchain'},
+      fintech:{en:'Fintech',th:'Fintech'}, set:{en:'Capital Market Thailand',th:'Capital Market Thailand'},
+    };
+    const chips = order.map(k => {
+      const color = k === 'all' ? '#7C3AED' : TOPIC[k].color;
+      const active = k === sel;
+      return {
+        label: chipLabel[k][lang],
+        onClick: () => this.setState({ topic: k }),
+        style: {
+          position:'relative', display:'inline-flex', alignItems:'center', gap:'7px',
+          background: active ? 'var(--soft)' : 'transparent',
+          border:'none', cursor:'pointer', fontFamily:'inherit',
+          fontSize:'14px', fontWeight: active ? 700 : 500,
+          color: active ? color : 'var(--muted)',
+          padding:'8px 14px', borderRadius:'10px 10px 0 0',
+          transition:'color .2s ease, background .2s ease',
+        },
+        dotStyle: {
+          width:'6px', height:'6px', borderRadius:'50%', flex:'none',
+          background: color, opacity: active ? 1 : 0.5, transition:'opacity .2s ease',
+        },
+        underlineStyle: {
+          position:'absolute', left:'0', right:'0', bottom:'-1px', height:'2px', borderRadius:'2px',
+          background: color, transform: active ? 'scaleX(1)' : 'scaleX(0)', transformOrigin:'left',
+          transition:'transform .28s cubic-bezier(.2,.7,.2,1)',
+        },
+      };
+    });
+
+    const mk = (code, name, sub) => {
+      const active = lang === code;
+      return {
+        name, sub,
+        onClick: () => this.setState({ lang: code, langOpen: false }),
+        style: {
+          width:'100%', display:'flex', alignItems:'center', justifyContent:'space-between',
+          padding:'15px 17px', marginBottom:'9px', borderRadius:'14px', cursor:'pointer',
+          fontFamily:'inherit', color:'var(--ink)', textAlign:'left', transition:'border-color .2s ease, background .2s ease',
+          background: active ? 'var(--soft)' : 'transparent',
+          border:'1.5px solid ' + (active ? 'var(--accent)' : 'var(--line)'),
+        },
+        checkStyle: { color:'var(--accent)', fontWeight:700, fontSize:'17px', opacity: active ? 1 : 0 },
+      };
+    };
+    const langOptions = [ mk('th','ไทย','Thai'), mk('en','English','อังกฤษ') ];
+
+    const canNewer = issueIdx > 0;
+    const canOlder = issueIdx < archive.length - 1;
+    const arrowStyle = (enabled) => ({
+      display:'inline-flex', alignItems:'center', justifyContent:'center',
+      width:'26px', height:'26px', flex:'none', borderRadius:'8px', padding:'0',
+      border:'1.5px solid var(--line)', background:'var(--paper)', color:'var(--ink)',
+      cursor: enabled ? 'pointer' : 'default', opacity: enabled ? 1 : 0.3,
+      transition:'border-color .2s ease, color .2s ease, opacity .2s ease',
+    });
+
+    // ---- calendar issue picker ----
+    const MONTHS = {
+      th: ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'],
+      en: ['January','February','March','April','May','June','July','August','September','October','November','December'],
+    };
+    const WD = { th:['อา','จ','อ','พ','พฤ','ศ','ส'], en:['Su','Mo','Tu','We','Th','Fr','Sa'] };
+    const selDate = (N && N.meta && N.meta.date) ? new Date(N.meta.date + 'T00:00:00') : new Date();
+    const calY = this.state.calY != null ? this.state.calY : selDate.getFullYear();
+    const calM = this.state.calM != null ? this.state.calM : selDate.getMonth();
+    this._calY = calY; this._calM = calM;
+    const pad2 = n => String(n).padStart(2, '0');
+    const issueByIso = {};
+    archive.forEach((it, i) => { if (it.meta && it.meta.date) issueByIso[it.meta.date] = i; });
+    const startDow = new Date(calY, calM, 1).getDay();
+    const dim = new Date(calY, calM + 1, 0).getDate();
+    const calCells = [];
+    for (let i = 0; i < startDow; i++) calCells.push({ key:'b'+i, label:'', disabled:true, onClick:()=>{}, style:{ visibility:'hidden', height:'34px' } });
+    for (let d = 1; d <= dim; d++){
+      const iso = calY + '-' + pad2(calM + 1) + '-' + pad2(d);
+      const hit = issueByIso[iso];
+      const has = hit !== undefined;
+      const isSel = has && hit === issueIdx;
+      calCells.push({
+        key:'d'+d, label:String(d), disabled: !has,
+        onClick: has ? (() => this.setState({ issueIdx: hit, calOpen:false, topic:'all', calY:null, calM:null })) : (()=>{}),
+        style: {
+          display:'flex', alignItems:'center', justifyContent:'center',
+          height:'34px', width:'100%', border:'none', borderRadius:'9px', padding:'0', fontFamily:'inherit', fontSize:'13px',
+          fontWeight: has ? 700 : 400,
+          cursor: has ? 'pointer' : 'default',
+          color: isSel ? '#fff' : (has ? 'var(--ink)' : 'var(--faint)'),
+          background: isSel ? 'linear-gradient(135deg,var(--accent),var(--accent-2))' : (has ? 'color-mix(in srgb, var(--accent) 14%, transparent)' : 'transparent'),
+          boxShadow: isSel ? '0 8px 18px -8px var(--accent)' : 'none',
+          transition:'background .18s ease, color .18s ease',
+        },
+      });
+    }
+    const weekdays = WD[lang].map((w, i) => ({ key:'w'+i, label:w }));
+    const calTitle = MONTHS[lang][calM] + ' ' + calY;
+
+    const common = {
+      L, chips, langOptions,
+      langName: L.langName, langOpen: this.state.langOpen,
+      canNewer, canOlder, olderDisabled: !canOlder, newerDisabled: !canNewer,
+      newerStyle: arrowStyle(canNewer), olderStyle: arrowStyle(canOlder),
+      calOpen: this.state.calOpen, calCells, weekdays, calTitle, calHint: L.calHint,
+      isDark: this.state.theme === 'dark', isLight: this.state.theme !== 'dark',
+      toggleTheme: () => this.setState(s => ({ theme: s.theme === 'dark' ? 'light' : 'dark' })),
+      openLang: () => this.setState({ langOpen: true }),
+      closeLang: () => this.setState({ langOpen: false }),
+      goNewer: () => { if (this.state.issueIdx > 0) this.setState(s => ({ issueIdx: s.issueIdx - 1, topic: 'all' })); },
+      goOlder: () => { if (this.state.issueIdx < archive.length - 1) this.setState(s => ({ issueIdx: s.issueIdx + 1, topic: 'all' })); },
+      toggleCal: () => this.setState(s => ({ calOpen: !s.calOpen })),
+      closeCal: () => this.setState({ calOpen: false }),
+      prevMonth: () => { let y = this._calY, m = this._calM - 1; if (m < 0){ m = 11; y--; } this.setState({ calY:y, calM:m }); },
+      nextMonth: () => { let y = this._calY, m = this._calM + 1; if (m > 11){ m = 0; y++; } this.setState({ calY:y, calM:m }); },
+      stop: (e) => { if (e && e.stopPropagation) e.stopPropagation(); },
+    };
+
+    if (!N) return { ...common, sections:[], briefs:[], showBrief:false, showDash:false, stats:[], tokens:[], growth:{} };
+
+    const match = k => sel === 'all' || k === sel;
+    const topicOrder = ['rwa','tokenization','blockchain','fintech','set'];
+    const sections = topicOrder.filter(match).map((k, i) => {
+      const color = TOPIC[k].color;
+      let leadStory, restStories;
+      if (k === 'rwa' && N.lead){
+        leadStory = this.resolveStory(N.lead, lang, color);
+        restStories = N.stories.filter(s => s.topic === 'rwa');
+      } else {
+        const group = N.stories.filter(s => s.topic === k);
+        leadStory = group.length ? this.resolveStory(group[0], lang, color) : null;
+        restStories = group.slice(1);
+      }
+      if (!leadStory) return null;
+      leadStory.featuredLabel = L.featured;
+      return {
+        color, num: String(i + 1).padStart(2, '0'),
+        isRwa: k === 'rwa', isTok: k === 'tokenization', isChain: k === 'blockchain', isFin: k === 'fintech', isSet: k === 'set',
+        heading: TOPIC[k][lang], lead: leadStory,
+        leadBg: 'color-mix(in srgb, ' + color + ' 7%, var(--soft))',
+        rest: restStories.map(s => this.resolveStory(s, lang, color)),
+      };
+    }).filter(Boolean).map((s, i) => ({ ...s, num: String(i + 1).padStart(2, '0') }));
+
+    const briefs = (sel === 'all') ? N.briefs.map(b => ({
+      color:b.color, url:b.url, strong:b[lang].strong, text:b[lang].text, src:b[lang].src,
+    })) : [];
+    const showBrief = (this.props.showInBrief ?? true) && briefs.length > 0;
+
+    // ---- overview dashboard (All view) ----
+    const market = N.market || { growth:{}, tokens:[] };
+    const stats = [
+      { value: String(((N.lead?1:0) + N.stories.length) + (N.briefs||[]).length), label: lang==='th' ? 'ข่าวทั้งหมด' : 'Total items' },
+      { value: String(new Set([...(N.lead?[N.lead.topic]:[]), ...N.stories.map(s => s.topic)]).size), label: lang==='th' ? 'หมวดหัวข้อ' : 'Topics' },
+      { value: String(new Set([...(N.lead?[N.lead.source]:[]), ...N.stories.map(s => s.source)]).size), label: lang==='th' ? 'แหล่งข่าว' : 'Sources' },
+    ];
+    const g = market.growth || {};
+    const pts = (g.points && g.points.length > 1) ? g.points : [1,2,3];
+    const chart = (points => {
+      const W=320, H=90, pad=8;
+      const mn=Math.min(...points), mx=Math.max(...points), sp=(mx-mn)||1;
+      const X=i => pad + (i/(points.length-1))*(W-2*pad);
+      const Y=v => (H-pad) - ((v-mn)/sp)*(H-2*pad);
+      let line=''; points.forEach((v,i) => { line += (i?' L':'M') + X(i).toFixed(1) + ' ' + Y(v).toFixed(1); });
+      const area = line + ' L'+X(points.length-1).toFixed(1)+' '+H + ' L'+X(0).toFixed(1)+' '+H + ' Z';
+      return { line, area };
+    })(pts);
+    const gUp = g.up !== false;
+    const growth = { label:(g.label && g.label[lang]) || '', value:g.value || '', delta:g.delta || '', up:gUp, col: gUp ? '#2DD4BF' : '#FB7185', arrow: gUp ? '▲' : '▼', line:chart.line, area:chart.area };
+    const tokens = (market.tokens || []).map(t => { const up = t.up !== false; return { sym:t.sym, name:t.name, price:t.price, chg:t.chg, col: up ? '#2DD4BF' : '#FB7185', arrow: up ? '▲' : '▼', barW: (t.bar || 50) + '%' }; });
+    const showDash = sel === 'all';
+    const hasTokens = tokens.length > 0;
+
+    return { ...common, sections, briefs, showBrief, showDash, stats, growth, tokens, hasTokens };
+  }
+}
+</script>
+</body>
+</html>
