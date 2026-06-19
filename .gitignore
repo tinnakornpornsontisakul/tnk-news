@@ -1,0 +1,5 @@
+# Claude Code local config & skills — kept out of the repo
+.claude/
+
+# OS / editor junk
+.DS_Store
