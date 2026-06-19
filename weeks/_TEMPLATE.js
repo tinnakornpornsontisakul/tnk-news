@@ -51,9 +51,9 @@ registerWeek({
       { sym: "ENA",    name: "Ethena",           price: "$0.00",  chg: "+0.0%", up: true,  bar: 58 },
       { sym: "SKY",    name: "Sky",              price: "$0.00",  chg: "+0.0%", up: true,  bar: 50 },
       { sym: "GFI",    name: "Goldfinch",        price: "$0.00",  chg: "+0.0%", up: true,  bar: 38 },
-      { sym: "MPL",    name: "Maple",            price: "$0.00",  chg: "+0.0%", up: true,  bar: 44 },
+      { sym: "SYRUP",  name: "Maple Finance",    price: "$0.00",  chg: "+0.0%", up: true,  bar: 44 },
       { sym: "CPOOL",  name: "Clearpool",        price: "$0.00",  chg: "+0.0%", up: true,  bar: 36 },
-      { sym: "TRU",    name: "TrueFi",           price: "$0.00",  chg: "+0.0%", up: true,  bar: 34 },
+      { sym: "USDM",   name: "Mountain USDM",    price: "$1.00",  chg: "+0.0%", up: true,  bar: 50 },
     ],
   },
 
