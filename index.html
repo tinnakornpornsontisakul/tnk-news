@@ -363,6 +363,9 @@ a.ref:hover .reftxt{ background-size:100% 1.5px; }
               <sc-if value="{{ sec.isSet }}" hint-placeholder-val="{{ false }}">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:19px; height:19px;"><rect x="3.5" y="7" width="5" height="7" rx="1"/><path d="M6 4v3M6 14v3"/><rect x="15.5" y="10" width="5" height="7" rx="1"/><path d="M18 7v3M18 17v3"/></svg>
               </sc-if>
+              <sc-if value="{{ sec.isEsg }}" hint-placeholder-val="{{ false }}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:19px; height:19px;"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.5 19 2c1 2 2 4.18 2 8 0 5.52-4.48 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg>
+              </sc-if>
             </span>
             <h3 style="font-size:15px; letter-spacing:.16em; font-weight:700; text-transform:uppercase; color:var(--ink); white-space:nowrap;">{{ sec.heading }}</h3>
             <span style="flex:1; height:1px; background:linear-gradient(90deg,var(--line),transparent);"></span>
@@ -658,6 +661,7 @@ class Component extends DCLogic {
       blockchain:   { color:'#2DD4BF', en:'Blockchain technology', th:'Blockchain' },
       fintech:      { color:'#F59E0B', en:'Financial technology',  th:'Fintech' },
       set:          { color:'#6366F1', en:'Capital Market Thailand · Digital assets', th:'ตลาดทุนไทย · Digital Asset' },
+      esg:          { color:'#22C55E', en:'Green finance & ESG',   th:'การเงินสีเขียว & ESG' },
     };
   }
 
@@ -712,11 +716,12 @@ class Component extends DCLogic {
     const meta = N ? N.meta : { issue:0, dateEN:'', dateTH:'' };
     const L = this.dict(lang, meta);
 
-    const order = ['all','rwa','tokenization','blockchain','fintech','set'];
+    const order = ['all','rwa','tokenization','blockchain','fintech','set','esg'];
     const chipLabel = {
       all:{en:'All',th:'ทั้งหมด'}, rwa:{en:'RWA',th:'RWA'},
       tokenization:{en:'Tokenization',th:'Token'}, blockchain:{en:'Blockchain',th:'Blockchain'},
       fintech:{en:'Fintech',th:'Fintech'}, set:{en:'Capital Market Thailand',th:'Capital Market Thailand'},
+      esg:{en:'ESG',th:'ESG'},
     };
     const chips = order.map(k => {
       const color = k === 'all' ? '#7C3AED' : TOPIC[k].color;
@@ -835,27 +840,51 @@ class Component extends DCLogic {
 
     const match = k => sel === 'all' || k === sel;
     const topicOrder = ['rwa','tokenization','blockchain','fintech','set'];
-    const sections = topicOrder.filter(match).map((k, i) => {
-      const color = TOPIC[k].color;
-      let leadStory, restStories;
-      if (k === 'rwa' && N.lead){
-        leadStory = this.resolveStory(N.lead, lang, color);
-        restStories = N.stories.filter(s => s.topic === 'rwa');
+    const iconFlags = k => ({ isRwa:k==='rwa', isTok:k==='tokenization', isChain:k==='blockchain', isFin:k==='fintech', isSet:k==='set', isEsg:k==='esg' });
+
+    // ESG is a cross-cutting lens: stories keep their home topic but are also
+    // tagged { esg:true }. Selecting ESG gathers them into one green section.
+    let sections;
+    if (sel === 'esg'){
+      const ec = TOPIC.esg.color;
+      const esgStories = [];
+      if (N.lead && N.lead.esg) esgStories.push(N.lead);
+      N.stories.forEach(s => { if (s.esg) esgStories.push(s); });
+      if (!esgStories.length){
+        sections = [];
       } else {
-        const group = N.stories.filter(s => s.topic === k);
-        leadStory = group.length ? this.resolveStory(group[0], lang, color) : null;
-        restStories = group.slice(1);
+        const leadStory = this.resolveStory(esgStories[0], lang, ec);
+        leadStory.featuredLabel = L.featured;
+        sections = [{
+          color: ec, num: '01', ...iconFlags('esg'),
+          heading: TOPIC.esg[lang], lead: leadStory,
+          leadBg: 'color-mix(in srgb, ' + ec + ' 7%, var(--soft))',
+          rest: esgStories.slice(1).map(s => this.resolveStory(s, lang, ec)),
+        }];
       }
-      if (!leadStory) return null;
-      leadStory.featuredLabel = L.featured;
-      return {
-        color, num: String(i + 1).padStart(2, '0'),
-        isRwa: k === 'rwa', isTok: k === 'tokenization', isChain: k === 'blockchain', isFin: k === 'fintech', isSet: k === 'set',
-        heading: TOPIC[k][lang], lead: leadStory,
-        leadBg: 'color-mix(in srgb, ' + color + ' 7%, var(--soft))',
-        rest: restStories.map(s => this.resolveStory(s, lang, color)),
-      };
-    }).filter(Boolean).map((s, i) => ({ ...s, num: String(i + 1).padStart(2, '0') }));
+    } else {
+      sections = topicOrder.filter(match).map((k, i) => {
+        const color = TOPIC[k].color;
+        let leadStory, restStories;
+        if (k === 'rwa' && N.lead){
+          leadStory = this.resolveStory(N.lead, lang, color);
+          restStories = N.stories.filter(s => s.topic === 'rwa');
+        } else {
+          const group = N.stories.filter(s => s.topic === k);
+          leadStory = group.length ? this.resolveStory(group[0], lang, color) : null;
+          restStories = group.slice(1);
+        }
+        if (!leadStory) return null;
+        leadStory.featuredLabel = L.featured;
+        return {
+          color, num: String(i + 1).padStart(2, '0'),
+          ...iconFlags(k),
+          heading: TOPIC[k][lang], lead: leadStory,
+          leadBg: 'color-mix(in srgb, ' + color + ' 7%, var(--soft))',
+          rest: restStories.map(s => this.resolveStory(s, lang, color)),
+        };
+      }).filter(Boolean).map((s, i) => ({ ...s, num: String(i + 1).padStart(2, '0') }));
+    }
 
     const briefs = (sel === 'all') ? N.briefs.map(b => ({
       color:b.color, url:b.url, strong:b[lang].strong, text:b[lang].text, src:b[lang].src,

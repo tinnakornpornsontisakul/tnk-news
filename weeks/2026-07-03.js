@@ -112,7 +112,7 @@ registerWeek({
     },
 
     {
-      topic: "rwa", source: "Verra", time: "2w", url: "https://verra.org/verra-and-sp-global-energy-to-launch-next-generation-registry-on-july-27/",
+      topic: "rwa", esg: true, source: "Verra", time: "2w", url: "https://verra.org/verra-and-sp-global-energy-to-launch-next-generation-registry-on-july-27/",
       hlType: "takeaway",
       en: {
         title: ["Verra's next-gen ", "carbon registry", " goes live July 27 with S&P Global"],
@@ -260,7 +260,7 @@ registerWeek({
     },
 
     {
-      topic: "fintech", source: "Gprnt / SGX", time: "1d", url: "https://www.gprnt.ai/newsroom/gprnt-partners-sgxgroup-to-strengthen-climate-reporting-transition-planning-on-esgenome",
+      topic: "fintech", esg: true, source: "Gprnt / SGX", time: "1d", url: "https://www.gprnt.ai/newsroom/gprnt-partners-sgxgroup-to-strengthen-climate-reporting-transition-planning-on-esgenome",
       hlType: "know",
       en: {
         title: ["Singapore wires ESG data into SGX with a ", "Gprnt–ESGenome", " revamp"],
@@ -276,7 +276,7 @@ registerWeek({
 
     // ---------- SET (Thai capital market — digital assets only) ----------
     {
-      topic: "set", source: "DITTO / Infoquest", time: "now", url: "https://www.ryt9.com/s/iq/12826886",
+      topic: "set", esg: true, source: "DITTO / Infoquest", time: "now", url: "https://www.ryt9.com/s/iq/12826886",
       hlType: "data",
       en: {
         title: ["Blu Green Token opens ", "฿480M subscription", " on Token X, July 3–13"],
@@ -290,7 +290,7 @@ registerWeek({
       },
     },
     {
-      topic: "set", source: "Thansettakij", time: "1w", url: "https://www.thansettakij.com/sustainable/662207",
+      topic: "set", esg: true, source: "Thansettakij", time: "1w", url: "https://www.thansettakij.com/sustainable/662207",
       hlType: "quote",
       en: {
         title: ["Big corporates and HNW investors ", "line up for Blu Green Token", ""],
@@ -304,7 +304,7 @@ registerWeek({
       },
     },
     {
-      topic: "set", source: "BOT / The Standard", time: "1w", url: "https://thestandard.co/bank-thailand-stablecoin-forex/",
+      topic: "set", esg: true, source: "BOT / The Standard", time: "1w", url: "https://thestandard.co/bank-thailand-stablecoin-forex/",
       hlType: "takeaway",
       en: {
         title: ["Bank of Thailand studies a ", "'Thai Baht Stablecoin'", " issued by banks"],
