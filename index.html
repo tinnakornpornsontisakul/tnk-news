@@ -494,6 +494,13 @@ a.ref:hover .reftxt{ background-size:100% 1.5px; }
         </section>
       </sc-for>
 
+      <!-- ===== EMPTY STATE (a topic filter with no stories in this issue) ===== -->
+      <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
+        <section class="reveal" style="margin-top:40px; border:1px dashed var(--line); border-radius:22px; padding:46px 28px; text-align:center; background:var(--soft);">
+          <div style="font-size:15px; line-height:1.7; color:var(--muted); max-width:54ch; margin:0 auto;">{{ L.noResults }}</div>
+        </section>
+      </sc-if>
+
       <!-- ===== IN BRIEF ===== -->
       <sc-if value="{{ showBrief }}" hint-placeholder-val="{{ true }}">
         <section class="callout reveal" style="position:relative; overflow:hidden; margin-top:52px; border:1px solid var(--line); border-radius:22px; padding:30px clamp(20px,3vw,34px); background:var(--soft);">
@@ -677,6 +684,7 @@ class Component extends DCLogic {
       modalTitle:'เลือกภาษา', modalSub:'Choose your language', themeTip:'สลับธีมสว่าง / มืด',
       dashOverview:'ภาพรวมสัปดาห์นี้', tickerTitle:'ราคาเหรียญ RWA', tickerHint:'สแน็ปช็อตล่าสุด · เลื่อนดูได้',
       archive:'ฉบับย้อนหลัง', issueTip:'เลือกฉบับ / สัปดาห์', latestTag:'ล่าสุด', olderTip:'ฉบับก่อนหน้า (เก่ากว่า)', newerTip:'ฉบับถัดไป (ใหม่กว่า)', calHint:'แตะวันที่ไฮไลต์เพื่อเปิดฉบับของสัปดาห์นั้น',
+      noResults:'ฉบับนี้ไม่มีข่าวในหมวดที่เลือก — ลองเลือก “ทั้งหมด” หรือเปิดฉบับอื่นจากปฏิทิน',
     };
     return {
       run:'WEEKLY ROUNDUP', issueShort:'Issue '+D.issue, issueLong:'Issue №\u00A0'+D.issue+' · '+D.dateEN,
@@ -688,6 +696,7 @@ class Component extends DCLogic {
       modalTitle:'Choose language', modalSub:'เลือกภาษาที่ต้องการ', themeTip:'Toggle light / dark theme',
       dashOverview:'This week at a glance', tickerTitle:'RWA token prices', tickerHint:'latest snapshot · swipe',
       archive:'Past issues', issueTip:'Choose issue / week', latestTag:'Latest', olderTip:'Older issue', newerTip:'Newer issue', calHint:'Tap a highlighted date to open that issue',
+      noResults:'No stories in this section for this issue — try the “All” tab or pick another issue from the calendar.',
     };
   }
 
@@ -922,8 +931,9 @@ class Component extends DCLogic {
     const tokens = (market.tokens || []).map(t => { const up = t.up !== false; return { sym:t.sym, name:t.name, price:t.price, chg:t.chg, col: up ? '#2DD4BF' : '#FB7185', arrow: up ? '▲' : '▼', barW: (t.bar || 50) + '%' }; });
     const showDash = sel === 'all';
     const hasTokens = tokens.length > 0;
+    const noResults = sections.length === 0 && !showDash;
 
-    return { ...common, sections, briefs, showBrief, showDash, stats, growth, tokens, hasTokens };
+    return { ...common, sections, briefs, showBrief, showDash, stats, growth, tokens, hasTokens, noResults };
   }
 }
 </script>
