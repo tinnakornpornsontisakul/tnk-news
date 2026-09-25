@@ -1,6 +1,7 @@
 // ============================================================================
 //  TokenX Weekly Roundup — ฉบับที่ 10 · 13–25 ก.ย. 2026
-//  ครอบคลุมต่อเนื่องจากฉบับที่ 9 (จบ 12 ก.ย.) → กรอบ 13 วัน (22 ข่าวเต็ม + 6 ข่าวสั้น)
+//  ครอบคลุมต่อเนื่องจากฉบับที่ 9 (จบ 12 ก.ย.) → กรอบ 13 วัน (22 ข่าวเต็ม + 8 ข่าวสั้น)
+//  ข่าวสั้น 2 ชิ้นแรก = ข่าว Token X ย้อนหลัง (25/31 ส.ค.) ที่หลุดจากฉบับ 9 — ใส่ตามคำขอผู้จัดทำ
 //  1 สัปดาห์ = 1 ไฟล์ · ไฟล์นี้ลงทะเบียนตัวเองผ่าน registerWeek(...)
 //  ทุกข่าว verify จากบทความต้นทางจริง (หัวข้อ/เนื้อหา/แหล่งตรงกัน · แหล่งไทยใช้เฉพาะที่อนุญาต)
 //  ราคาเหรียญอ่านจาก CoinGecko 25 ก.ย. 2026 — ฉบับนี้ `chg` ใช้ค่า 14 วันให้ตรงกับกรอบ 13 วัน
@@ -404,6 +405,13 @@ registerWeek({
 
   // ── ข่าวสั้น "โดยสรุป" ───────────────────────────────────────────────────────
   briefs: [
+    // ข่าว Token X ย้อนหลัง (25 และ 31 ส.ค.) — หลุดจากฉบับ 9 ใส่เป็นข่าวสั้นตามที่ผู้จัดทำขอ · ระบุวันที่ในข้อความให้ผู้อ่านเห็นว่าเป็นข่าวย้อนหลัง
+    { color: "#6366F1", url: "https://www.thaipr.net/finance/3755558",
+      en: { strong: "Token X and Siam TC brought in SBI Digital Markets", text: " (announced 31 Aug) to widen investment access to Blu Green Token across Asia-Pacific. The Singapore digital-asset firm, regulated by the MAS under a Capital Markets Services licence, acts as Blu Green's overseas partner through post-ICO support — which the partners describe as Thailand's first bridge between a Thai carbon-credit project and regional institutional capital. The token's reference project covers 17,531.04 rai of mangrove forest registered with TGO under the Standard T-VER and Premium T-VER standards.", src: "ThaiPR.net" },
+      th: { strong: "Token X และ Siam TC ผนึก SBI Digital Markets", text: " (ประกาศ 31 ส.ค.) ขยายโอกาสการลงทุนใน Blu Green Token สู่ภูมิภาคเอเชียแปซิฟิก โดย SBIDM บริษัทสินทรัพย์ดิจิทัลจากสิงคโปร์ที่ถือใบอนุญาต Capital Markets Services License ภายใต้การกำกับของ MAS ทำหน้าที่พันธมิตรต่างประเทศผ่านการสนับสนุนภายหลังการเสนอขาย (ICO) ซึ่งระบุว่าเป็นโครงการแรกของไทยที่เชื่อมโครงการคาร์บอนเครดิตไทยกับฐานเงินทุนสถาบันระดับภูมิภาค · โครงการอ้างอิงของ Blu Green Token คือป่าชายเลน 17,531.04 ไร่ ที่ขึ้นทะเบียนกับ อบก. ภายใต้มาตรฐาน Standard T-VER และ Premium T-VER แล้ว", src: "ThaiPR.net" } },
+    { color: "#6366F1", url: "https://www.thaipr.net/finance/3753897",
+      en: { strong: "CP Group's CPP appointed Token X", text: " (25 Aug) as its SEC-licensed ICO portal to study Green Tokenization of environmental projects — rubber plantations, forestry and alternate-wetting-and-drying rice farming — aiming at carbon-credit projects under Thailand's voluntary greenhouse-gas standard developed by TGO and, potentially, biodiversity credits. CPP's government-partnered rubber carbon-credit project alone spans 500,000 rai in five provinces and more than 60,000 farming households; Token X said any token issuance and offering will be considered at a later stage.", src: "ThaiPR.net" },
+      th: { strong: "CPP ในเครือเจริญโภคภัณฑ์ แต่งตั้ง Token X", text: " (25 ส.ค.) เป็น ICO Portal ที่ได้รับอนุญาตจาก ก.ล.ต. เพื่อศึกษา Green Tokenization กับโครงการด้านสิ่งแวดล้อม ทั้งสวนยางพารา โครงการป่าไม้ และนาข้าวแบบเปียกสลับแห้ง (AWD) มุ่งพัฒนาโครงการคาร์บอนเครดิตตามมาตรฐานภาคสมัครใจของไทยที่พัฒนาโดย อบก. และอาจต่อยอดสู่ Biodiversity Credits · เฉพาะโครงการคาร์บอนเครดิตในสวนยางที่ทำร่วมกับภาครัฐมีพื้นที่ 500,000 ไร่ใน 5 จังหวัด ครอบคลุมเกษตรกรกว่า 60,000 ครัวเรือน ทั้งนี้ Token X ระบุว่าการออกและเสนอขาย Token จะพิจารณาในขั้นตอนต่อไปตามความเหมาะสม", src: "ThaiPR.net" } },
     { color: "#A855F7", url: "https://ir.wisdomtree.com/news-events/press-releases/detail/805/wisdomtree-and-moonpay-collaborate-to-expand-u-s-access-to",
       en: { strong: "WisdomTree and MoonPay", text: " will widen US access to WTGXX, WisdomTree's tokenized Treasury money market fund, giving eligible investors another way in through MoonPay's technology and network of more than 35 million accounts. MoonPay also plans to use WTGXX as part of its stablecoin reserve management — tokenized treasury funds increasingly sitting behind stablecoins as the reserve asset.", src: "WisdomTree" },
       th: { strong: "WisdomTree และ MoonPay", text: " ร่วมกันขยายการเข้าถึง WTGXX กองทุนตลาดเงินพันธบัตรรัฐบาลสหรัฐแบบ Token ของ WisdomTree ให้ผู้ลงทุนสหรัฐที่มีคุณสมบัติ ผ่านเทคโนโลยีและเครือข่ายกว่า 35 ล้านบัญชีของ MoonPay โดย MoonPay ยังวางแผนใช้ WTGXX เป็นส่วนหนึ่งในการบริหารเงินสำรองของ Stablecoin — สะท้อนว่ากองทุนพันธบัตรแบบ Token กำลังกลายเป็นสินทรัพย์สำรองเบื้องหลัง Stablecoin", src: "WisdomTree" } },
